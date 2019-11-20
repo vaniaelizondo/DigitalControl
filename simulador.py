@@ -9,16 +9,16 @@ import matplotlib.pyplot as plt
 
 ################# Declaracion de ambiente #################
 # Variables globales
-m = [0]*1000
-c = [0]*1000
+m = []
+c = []
 k = 0
-t = 0.5
 i = 0
+t = 0.5
 
 # Leer archivo entrada
 entrada = open('entrada.txt')
 for x in entrada:
-    m[i] = float(x)
+    m.append(float(x))
     i += 1
 entrada.close()
 
@@ -27,92 +27,10 @@ entrada.close()
 def startGraphs():
     global mainGUI
     global fig, axs
-    global c, m, k, t
-    global a1, a2, a3, a4
-    global b0, b1, b2, b3, b4
-    global d, P, aplicarP
-
-    # Grafica con perturbacion
-    if (aplicarP.get()):
-        c[k] = a1*c[k-1] + a2*c[k-2] + a3*c[k-3] + a4*c[k-4] + b0*m[k-d] + b1*m[k-1-d] + b2*m[k-2-d] + b3*m[k-3-d] + b4*m[k-4-d] + P
-        
-    # Grafica sin perturbacion
-    else:
-        c[k] = a1*c[k-1] + a2*c[k-2] + a3*c[k-3] + a4*c[k-4] + b0*m[k-d] + b1*m[k-1-d] + b2*m[k-2-d] + b3*m[k-3-d] + b4*m[k-4-d]
-        P = 0
-
-    axs[0].plot(k*t, c[k], 'b.')
-    axs[1].plot(k*t, m[k], 'g.', k*t, P, 'r+')
-    axs[1].legend(['m[k]', 'P'], loc='upper right')
-    print('c[{}]={}, m[{}]={}, P: {} clicked: {}'. format(k, c[k], k, m[k], P, aplicarP.get()))
-    plt.pause(0.001)
-    k += 1
-    mainGUI.after(1000, startGraphs)
-
-################# Funcion que abre interfaz grafica #################
-def main():
-# Variables globales
-    global mainGUI
-    global fig, axs
-    global c, m, k, t
-    global a1, a2, a3, a4
-    global b0, b1, b2, b3, b4
-    global d, P, aplicarP
-
-# Definicion de ambiente grafico 
-    mainGUI = Tk()
-    mainGUI.title("Planta con Modelo ARX")
-
-    # Labels
-    Label(mainGUI, text='').grid(row=0) 
-    Label(mainGUI, text='a1').grid(row=1) 
-    Label(mainGUI, text='a2').grid(row=2) 
-    Label(mainGUI, text='a3').grid(row=3) 
-    Label(mainGUI, text='a4').grid(row=4) 
-    Label(mainGUI, text='b0').grid(row=1, column=2) 
-    Label(mainGUI, text='b1').grid(row=2, column=2) 
-    Label(mainGUI, text='b2').grid(row=3, column=2) 
-    Label(mainGUI, text='b3').grid(row=4, column=2) 
-    Label(mainGUI, text='b4').grid(row=5, column=2) 
-    Label(mainGUI, text='d').grid(row=1, column=4) 
-    Label(mainGUI, text='').grid(row=6) 
-    Label(mainGUI, text='').grid(row=8) 
-    Label(mainGUI, text='').grid(row=10) 
-
-    # Entradas de texto
-    ea1 = Entry(mainGUI) 
-    ea2 = Entry(mainGUI) 
-    ea3 = Entry(mainGUI) 
-    ea4 = Entry(mainGUI) 
-    eb0 = Entry(mainGUI) 
-    eb1 = Entry(mainGUI) 
-    eb2 = Entry(mainGUI) 
-    eb3 = Entry(mainGUI) 
-    eb4 = Entry(mainGUI) 
-    ed = Entry(mainGUI) 
-    eP = Entry(mainGUI) 
-
-    # Configuracion entradas de texto
-    ea1.grid(row=1, column=1) 
-    ea2.grid(row=2, column=1)
-    ea3.grid(row=3, column=1)
-    ea4.grid(row=4, column=1)
-    eb0.grid(row=1, column=3) 
-    eb1.grid(row=2, column=3) 
-    eb2.grid(row=3, column=3)
-    eb3.grid(row=4, column=3)
-    eb4.grid(row=5, column=3)
-    ed.grid(row=1, column=5)
-    eP.grid(row=2, column=5)
-
-    # Boton de seleccion
-    aplicarP = BooleanVar()
-    bp = Checkbutton(mainGUI, text='Aplicar Perturbación', var=aplicarP)
-    bp.grid(row=2, column=4)
-
-    # Botones
-    Button(mainGUI, text='Comenzar programa', command=startGraphs).grid(row=7, column=3)
-    Button(mainGUI, text='Terminar programa', command=mainGUI.destroy).grid(row=9, column=3)
+    global c, m, k, i, t
+    global ea1, ea2, ea3, ea4
+    global eb0, eb1, eb2, eb3, eb4
+    global ed, eP, aplicarP
 
 # Actualizar entradas de coeficientes
     try: 
@@ -160,19 +78,97 @@ def main():
     except:
         P = 0
 
+# Actualizar grafica con calculos
+    print('a1: {} a2: {} a3: {} a4: {} '.format(a1,a2,a3,a4))
+    print('b0: {} b1: {} b2: {} b3: {} b4: {} '.format(b0,b1,b2,b3,b4))
+    print('t: {} d: {} P: {} k: {} i: {}'.format(t, d,P, k, i))
+
+    try:
+        m[k]
+    except IndexError:
+        m.append(m[k-1])
+
+    # Grafica con perturbacion
+    if (aplicarP.get()):
+        c.append(a1*c[k-1] + a2*c[k-2] + a3*c[k-3] + a4*c[k-4] + b0*m[k-d] + b1*m[k-1-d] + b2*m[k-2-d] + b3*m[k-3-d] + b4*m[k-4-d] + P)
+        
+    # Grafica sin perturbacion
+    else:
+        c.append(a1*c[k-1] + a2*c[k-2] + a3*c[k-3] + a4*c[k-4] + b0*m[k-d] + b1*m[k-1-d] + b2*m[k-2-d] + b3*m[k-3-d] + b4*m[k-4-d])
+        P = 0
+
+    axs[0].plot(k*t, c[k], 'b.')
+    axs[1].plot(k*t, m[k], 'g.', k*t, P, 'r+')
+    axs[1].legend(['m[k]', 'P'], loc='upper right')
+    print('c[{}]={}, m[{}]={}, P: {} clicked: {}'. format(k, c[k], k, m[k], P, aplicarP.get()))
+    plt.pause(0.01)
+    k += 1
+    mainGUI.after(1000, startGraphs)
+
+################# Definicion de ambiente grafico  #################
+mainGUI = Tk()
+mainGUI.title("Planta con Modelo ARX")
+
+# Labels
+Label(mainGUI, text='').grid(row=0) 
+Label(mainGUI, text='a1').grid(row=1) 
+Label(mainGUI, text='a2').grid(row=2) 
+Label(mainGUI, text='a3').grid(row=3) 
+Label(mainGUI, text='a4').grid(row=4) 
+Label(mainGUI, text='b0').grid(row=1, column=2) 
+Label(mainGUI, text='b1').grid(row=2, column=2) 
+Label(mainGUI, text='b2').grid(row=3, column=2) 
+Label(mainGUI, text='b3').grid(row=4, column=2) 
+Label(mainGUI, text='b4').grid(row=5, column=2) 
+Label(mainGUI, text='d').grid(row=1, column=4) 
+Label(mainGUI, text='').grid(row=6) 
+Label(mainGUI, text='').grid(row=8) 
+Label(mainGUI, text='').grid(row=10) 
+
+# Entradas de texto
+ea1 = Entry(mainGUI) 
+ea2 = Entry(mainGUI) 
+ea3 = Entry(mainGUI) 
+ea4 = Entry(mainGUI) 
+eb0 = Entry(mainGUI) 
+eb1 = Entry(mainGUI) 
+eb2 = Entry(mainGUI) 
+eb3 = Entry(mainGUI) 
+eb4 = Entry(mainGUI) 
+ed = Entry(mainGUI) 
+eP = Entry(mainGUI) 
+
+# Configuracion entradas de texto
+ea1.grid(row=1, column=1) 
+ea2.grid(row=2, column=1)
+ea3.grid(row=3, column=1)
+ea4.grid(row=4, column=1)
+eb0.grid(row=1, column=3) 
+eb1.grid(row=2, column=3) 
+eb2.grid(row=3, column=3)
+eb3.grid(row=4, column=3)
+eb4.grid(row=5, column=3)
+ed.grid(row=1, column=5)
+eP.grid(row=2, column=5)
+
+# Boton de seleccion
+aplicarP = BooleanVar()
+bp = Checkbutton(mainGUI, text='Aplicar Perturbación', var=aplicarP)
+bp.grid(row=2, column=4)
+
+# Botones
+Button(mainGUI, text='Comenzar programa', command=startGraphs).grid(row=7, column=3)
+Button(mainGUI, text='Terminar programa', command=mainGUI.destroy).grid(row=9, column=3)
+
 # Creacion de graficas interactivas
-    plt.ion()
-    plt.show()
-    fig, axs = plt.subplots(2, sharex=True)
-    axs[0].set_title('Salida c(k)')
-    axs[0].set_ylabel('Amplitud')
-    axs[1].set_title('Entrada m(k) y Perturbación')
-    axs[1].set_xlabel('Tiempo')
-    axs[1].set_ylabel('Amplitud')
+plt.ion()
+plt.show()
+fig, axs = plt.subplots(2, sharex=True)
+axs[0].set_title('Salida c(k)')
+axs[0].set_ylabel('Amplitud')
+axs[1].set_title('Entrada m(k) y Perturbación')
+axs[1].set_xlabel('Tiempo')
+axs[1].set_ylabel('Amplitud')
 
-    # Funcion recursiva del ambiente grafico
-    mainGUI.mainloop()
-
-# Programa recursivo
-if __name__ == "__main__":
-    main()
+# Funcion recursiva del ambiente grafico
+mainGUI.mainloop()
