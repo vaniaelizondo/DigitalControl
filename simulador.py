@@ -14,9 +14,18 @@ c = []
 k = 0
 i = 0
 t = 0.5
+c1 = 0
+c2 = 0
+c3 = 0
+c4 = 0
+m0 = 0
+m1 = 0
+m2 = 0
+m3 = 0
+m4 = 0
 
 # Leer archivo entrada
-entrada = open('entrada.txt')
+entrada = open("entrada.txt")
 for x in entrada:
     m.append(float(x))
     i += 1
@@ -28,6 +37,8 @@ def startGraphs():
     global mainGUI
     global fig, axs
     global c, m, k, i, t
+    global c1, c2, c3, c4
+    global m0, m1, m2, m3, m4
     global ea1, ea2, ea3, ea4
     global eb0, eb1, eb2, eb3, eb4
     global ed, eP, aplicarP
@@ -78,29 +89,66 @@ def startGraphs():
     except:
         P = 0
 
-# Actualizar grafica con calculos
-    print('a1: {} a2: {} a3: {} a4: {} '.format(a1,a2,a3,a4))
-    print('b0: {} b1: {} b2: {} b3: {} b4: {} '.format(b0,b1,b2,b3,b4))
-    print('t: {} d: {} P: {} k: {} i: {}'.format(t, d,P, k, i))
-
+# Validar indices
     try:
         m[k]
     except IndexError:
         m.append(m[k-1])
-
-    # Grafica con perturbacion
-    if (aplicarP.get()):
-        c.append(a1*c[k-1] + a2*c[k-2] + a3*c[k-3] + a4*c[k-4] + b0*m[k-d] + b1*m[k-1-d] + b2*m[k-2-d] + b3*m[k-3-d] + b4*m[k-4-d] + P)
-        
-    # Grafica sin perturbacion
+    if ((k-1) < 0):
+        c1 = 0
     else:
-        c.append(a1*c[k-1] + a2*c[k-2] + a3*c[k-3] + a4*c[k-4] + b0*m[k-d] + b1*m[k-1-d] + b2*m[k-2-d] + b3*m[k-3-d] + b4*m[k-4-d])
+        c1 = c[k-1]
+    if ((k-2) < 0):
+        c2 = 0
+    else:
+        c2 = c[k-2]
+    if ((k-3) < 0):
+        c3 = 0
+    else:
+        c3 = c[k-3]
+    if ((k-4) < 0):
+        c4 = 0
+    else:
+        c4 = c[k-4]
+    if ((k-d) < 0):
+        m0 = 0
+    else:
+        m0 = m[k-d]
+    if ((k-1-d) < 0):
+        m1 = 0
+    else:
+        m1 = m[k-1-d]
+    if ((k-2-d) < 0):
+        m2 = 0
+    else:
+        m2 = m[k-2-d]
+    if ((k-3-d) < 0):
+        m3 = 0
+    else:
+        m3 = m[k-3-d]
+    if ((k-4-d) < 0):
+        m4 = 0
+    else:
+        m4 = m[k-4-d]
+    if (aplicarP.get()):
+        try:
+            P = float(eP.get())
+        except:
+            P = 0
+    else:
         P = 0
 
+# Graficar
+    c.append(a1*c1 + a2*c2 + a3*c3 + a4*c4 + b0*m0 + b1*m1 + b2*m2 + b3*m3 + b4*m4 + P)
     axs[0].plot(k*t, c[k], 'b.')
     axs[1].plot(k*t, m[k], 'g.', k*t, P, 'r+')
     axs[1].legend(['m[k]', 'P'], loc='upper right')
-    print('c[{}]={}, m[{}]={}, P: {} clicked: {}'. format(k, c[k], k, m[k], P, aplicarP.get()))
+    print('a1: {} a2: {} a3: {} a4: {} '.format(a1,a2,a3,a4))
+    print('b0: {} b1: {} b2: {} b3: {} b4: {} '.format(b0,b1,b2,b3,b4))
+    print('c1: {} c2: {} c3: {} c4: {} '.format(c1,c2,c3,c4))
+    print('m0: {} m1: {} m2: {} m3: {} m4: {} '.format(m0,m1,m2,m3,m4))
+    print('d: {} P: {}'.format(d,P))
+    print('c[{}]={}, m[{}]={}, clicked: {}\n'. format(k, c[k], k, m[k], aplicarP.get()))
     plt.pause(0.01)
     k += 1
     mainGUI.after(1000, startGraphs)
