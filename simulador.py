@@ -1,6 +1,6 @@
 from tkinter import *
 import matplotlib.pyplot as plt
-from numpy import *
+import numpy as np
 from sympy import symbols, Eq, solve
 
 ###########################################################
@@ -99,12 +99,8 @@ def startGraphs():
         except:
             t = 0
         tP, N = symbols('tP N')
-        try:
-            NDiv = tP/t
-        except ZeroDivisionError:
-            NDiv = 0
-        eqN = Eq(floor(NDiv))
-        eqTP = Eq(theta - N*t)
+        eqN = Eq(tP/t)
+        eqTP = Eq(theta + N*t)
         sol = solve((eqN, eqTP), (N, tP))
         d = sol[N]
         thetaP = sol[tP]
@@ -113,7 +109,7 @@ def startGraphs():
         except ZeroDivisionError:
             mt = 1
         try:
-            a1 = exp(-(t/tau))
+            a1 = np.exp(-(t/tau))
         except ZeroDivisionError:
             a1 = 1
         a2 = 0
@@ -121,7 +117,7 @@ def startGraphs():
         a4 = 0
         b0 = 0
         try:
-            b1 = kc * (1 - exp(-(mt*t/tau)))
+            b1 = kc * (1 - np.exp(-(mt*t/tau)))
         except ZeroDivisionError:
             b1 = 0
         try:
@@ -132,7 +128,7 @@ def startGraphs():
             exp2 = (t/tau)
         except ZeroDivisionError:
             exp2 = 0
-        b2 = kc * (exp(-exp1) - exp(-exp2))
+        b2 = kc * (np.exp(-exp1) - np.exp(-exp2))
         b3 = 0
         b4 = 0
 
@@ -211,11 +207,9 @@ def startGraphs():
     if (modoOperacion.get() == 'manual'):
         if ((k-1) < 0):
             c1 = 0
-            m1 = 0
             rk = 0
         else:
             c1 = c[k-1]
-            m1 = c[k-1]
             rk = c[k-1]
         if ((k-2) < 0):
             c2 = 0
@@ -229,19 +223,26 @@ def startGraphs():
             c4 = 0
         else:
             c4 = c[k-4]
-        alpha1 = 1
-        alpha2 = 0
-        alpha3 = 0
-        alpha4 = 0
-        beta0 = 0
-        beta1 = 0
-        beta2 = 0
-        beta3 = 0
-        beta4 = 0
-        m0 = 0
-        m2 = 0
-        m3 = 0
-        m4 = 0
+        if ((k-d) <= 0):
+            m0 = 0
+        else:
+            m0 = m[k-d]
+        if ((k-1-d) < 0):
+            m1 = 0
+        else:
+            m1 = m[k-1-d]
+        if ((k-2-d) < 0):
+            m2 = 0
+        else:
+            m2 = m[k-2-d]
+        if ((k-3-d) < 0):
+            m3 = 0
+        else:
+            m3 = m[k-3-d]
+        if ((k-4-d) < 0):
+            m4 = 0
+        else:
+            m4 = m[k-4-d]
         e0 = 0
         e1 = 0
         e2 = 0
@@ -335,12 +336,12 @@ ordenPlanta = StringVar(value='cero')
 controlador = StringVar(value='PID')
 
 # Radio buttons
-rbMan = Radiobutton(mainGUI, text='Manual', indicatoron=False, variable=modoOperacion, value='manual')
-rbAuto = Radiobutton(mainGUI, text='Automático', indicatoron=False, variable=modoOperacion, value='auto')
-rbCero = Radiobutton(mainGUI, text='Orden cero', indicatoron=False, selectcolor='blue' , variable=ordenPlanta, value='cero')
-rbPrimero = Radiobutton(mainGUI, text='Primer orden', indicatoron=False, selectcolor='blue' , variable=ordenPlanta, value='primero')
-rbPID = Radiobutton(mainGUI, text='PID', indicatoron=False, selectcolor='dark green' , variable=controlador, value='PID')
-rbEcGral = Radiobutton(mainGUI, text='Ec. General', indicatoron=False, selectcolor='dark green' , variable=controlador, value='ecgral')
+rbMan = Radiobutton(mainGUI, text='Manual', indicatoron=False, selectcolor='magenta', variable=modoOperacion, value='manual')
+rbAuto = Radiobutton(mainGUI, text='Automático', indicatoron=False, selectcolor='magenta', variable=modoOperacion, value='auto')
+rbCero = Radiobutton(mainGUI, text='Orden cero', indicatoron=False, selectcolor='cyan', variable=ordenPlanta, value='cero')
+rbPrimero = Radiobutton(mainGUI, text='Primer orden', indicatoron=False, selectcolor='cyan', variable=ordenPlanta, value='primero')
+rbPID = Radiobutton(mainGUI, text='PID', indicatoron=False, selectcolor='yellow', variable=controlador, value='PID')
+rbEcGral = Radiobutton(mainGUI, text='Ec. General', indicatoron=False, selectcolor='yellow', variable=controlador, value='ecgral')
 rbMan.grid(row=1, column=3)
 rbAuto.grid(row=1, column=4)
 rbCero.grid(row=3, column=1)
