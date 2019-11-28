@@ -286,10 +286,10 @@ def startGraphs():
         rk = c[k]
 
 # Graficar
-    # axs[0].plot(k, rk, 'bs', k, c[k], 'm.')
-    # axs[0].legend(['rk', 'c[k]'], loc='upper right')
-    # axs[1].plot(k, m[k], 'gs', k, PE, 'rd', k, PS, 'c.')
-    # axs[1].legend(['m[k]', 'Pert. Entrada', 'Pert. Salida'], loc='upper right')
+    axs[0].plot(k, rk, 'bs', k, c[k], 'm.')
+    axs[0].legend(['rk', 'c[k]'], loc='upper right')
+    axs[1].plot(k, m[k], 'gs', k, PE, 'rd', k, PS, 'c.')
+    axs[1].legend(['m[k]', 'Pert. Entrada', 'Pert. Salida'], loc='upper right')
     # print('ordenPlanta: {}     controlador: {}     modoOperacion: {}'.format(ordenPlanta.get(),controlador.get(),modoOperacion.get()))
     # print('a1: {}   a2: {}    a3: {}     a4: {} '.format(a1,a2,a3,a4))
     # print('b0: {}   b1: {}    b2: {}     b3: {}     b4: {}   d: {}'.format(b0,b1,b2,b3,b4,d))
