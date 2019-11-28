@@ -206,113 +206,101 @@ def startGraphs():
         except:
             mk = 0
         m.append(mk)
-        if ((k-1) < 0):
-            c1 = 0
-            rk = 0
-        else:
-            c1 = c[k-1]
-            rk = c[k-1]
-        if ((k-2) < 0):
-            c2 = 0
-        else:
-            c2 = c[k-2]
-        if ((k-3) < 0):
-            c3 = 0
-        else:
-            c3 = c[k-3]
-        if ((k-4) < 0):
-            c4 = 0
-        else:
-            c4 = c[k-4]
-        if ((k-d) < 0):
-            m0 = 0
-        else:
-            m0 = m[k-d]
-        if ((k-1-d) < 0):
-            m1 = 0
-        else:
-            m1 = m[k-1-d]
-        if ((k-2-d) < 0):
-            m2 = 0
-        else:
-            m2 = m[k-2-d]
-        if ((k-3-d) < 0):
-            m3 = 0
-        else:
-            m3 = m[k-3-d]
-        if ((k-4-d) < 0):
-            m4 = 0
-        else:
-            m4 = m[k-4-d]
     elif (modoOperacion.get() == 'auto'):
         try:
             rk = float(eRk.get())
         except:
             rk = 0
         if ((k-1) < 0):
-            c1 = 0
+            m1 = 0
             e0 = 0
         else:
-            c1 = c[k-1]
+            m1 = m[k-1]
             e0 = rk - c[k-1]
         if ((k-2) < 0):
-            c2 = 0
+            m2 = 0
             e1 = 0
         else:
-            c2 = c[k-2]
+            m2 = m[k-2]
             e1 = rk - c[k-2]
         if ((k-3) < 0):
-            c3 = 0
+            m3 = 0
             e2 = 0
         else:
-            c3 = c[k-3]
+            m3 = m[k-3]
             e2 = rk - c[k-3]
         if ((k-4) < 0):
-            c4 = 0
+            m4 = 0
             e3 = 0
         else:
-            c4 = c[k-4]
+            m4 = m[k-4]
             e3 = rk - c[k-4]
         if ((k-5) < 0):
             e4 = 0
         else:
             e4 = rk - c[k-5]
-        m0 = 0
-        if ((k-1-d) < 0):
-            m1 = 0
-        else:
-            m1 = m[k-1-d]
-        if ((k-2-d) < 0):
-            m2 = 0
-        else:
-            m2 = m[k-2-d]
-        if ((k-3-d) < 0):
-            m3 = 0
-        else:
-            m3 = m[k-3-d]
-        if ((k-4-d) < 0):
-            m4 = 0
-        else:
-            m4 = m[k-4-d]
         m.append(alpha1*m1 + alpha2*m2 + alpha3*m3 + alpha4*m4 + beta0*e0 + beta1*e1 + beta2*e2 + beta3*e3 + beta4*e4)
-    
-# Graficar
+
+# Validar indices de c[k] y m[k] para salida ck
+    if ((k-1) < 0):
+        c1 = 0
+    else:
+        c1 = c[k-1]
+    if ((k-2) < 0):
+        c2 = 0
+    else:
+        c2 = c[k-2]
+    if ((k-3) < 0):
+        c3 = 0
+    else:
+        c3 = c[k-3]
+    if ((k-4) < 0):
+        c4 = 0
+    else:
+        c4 = c[k-4]
+    if ((k-d) < 0):
+        m0 = 0
+    else:
+        m0 = m[k-d]
+    if ((k-1-d) < 0):
+        m1 = 0
+    else:
+        m1 = m[k-1-d]
+    if ((k-2-d) < 0):
+        m2 = 0
+    else:
+        m2 = m[k-2-d]
+    if ((k-3-d) < 0):
+        m3 = 0
+    else:
+        m3 = m[k-3-d]
+    if ((k-4-d) < 0):
+        m4 = 0
+    else:
+        m4 = m[k-4-d]
+
+# Calculo de ck con valores obtenidos
     c.append(PE + a1*c1 + a2*c2 + a3*c3 + a4*c4 + b0*m0 + b1*m1 + b2*m2 + b3*m3 + b4*m4 + PS)
-    axs[0].plot(k, rk, 'bs', k, c[k], 'm.')
-    axs[0].legend(['rk', 'c[k]'], loc='upper right')
-    axs[1].plot(k, m[k], 'gs', k, PE, 'rd', k, PS, 'c.')
-    axs[1].legend(['m[k]', 'Pert. Entrada', 'Pert. Salida'], loc='upper right')
-    print('ordenPlanta: {}     controlador: {}     modoOperacion: {}'.format(ordenPlanta.get(),controlador.get(),modoOperacion.get()))
-    print('a1: {}   a2: {}    a3: {}     a4: {} '.format(a1,a2,a3,a4))
-    print('b0: {}   b1: {}    b2: {}     b3: {}     b4: {}   d: {}'.format(b0,b1,b2,b3,b4,d))
-    print('alpha1: {}   alpha2: {}    alpha3: {}     alpha4: {} '.format(alpha1,alpha2,alpha3,alpha4))
-    print('beta0: {}    beta1: {}     beta2: {}    beta3: {}   beta4: {}'.format(beta0,beta1,beta2,beta3,beta4))
-    # print('t: {}    mk: {}      rk: {}'.format(t,mk,rk))
-    print('PE: {}   PS: {}'.format(PE,PS))
-    print('m0: {}   m1: {}    m2: {}     m3: {}  m4: {} '.format(m0,m1,m2,m3,m4))
-    # print('e0: {}   e1: {}    e2: {}     e3: {}  e4: {} '.format(e0,e1,e2,e3,e4))
-    print('c1: {}   c2: {}    c3: {}     c4: {}'.format(c1,c2,c3,c4))
-    print('c[{}]={}     m[{}]={}\n'. format(k, c[k], k, m[k]))
+
+    if (modoOperacion.get() == 'manual'):
+        rk = c[k]
+
+# Graficar
+    # axs[0].plot(k, rk, 'bs', k, c[k], 'm.')
+    # axs[0].legend(['rk', 'c[k]'], loc='upper right')
+    # axs[1].plot(k, m[k], 'gs', k, PE, 'rd', k, PS, 'c.')
+    # axs[1].legend(['m[k]', 'Pert. Entrada', 'Pert. Salida'], loc='upper right')
+    # print('ordenPlanta: {}     controlador: {}     modoOperacion: {}'.format(ordenPlanta.get(),controlador.get(),modoOperacion.get()))
+    # print('a1: {}   a2: {}    a3: {}     a4: {} '.format(a1,a2,a3,a4))
+    # print('b0: {}   b1: {}    b2: {}     b3: {}     b4: {}   d: {}'.format(b0,b1,b2,b3,b4,d))
+    # print('alpha1: {}   alpha2: {}    alpha3: {}     alpha4: {} '.format(alpha1,alpha2,alpha3,alpha4))
+    # print('beta0: {}    beta1: {}     beta2: {}    beta3: {}   beta4: {}'.format(beta0,beta1,beta2,beta3,beta4))
+    # # print('t: {}    mk: {}      rk: {}'.format(t,mk,rk))
+    # print('PE: {}   PS: {}'.format(PE,PS))
+    # print('m0: {}   m1: {}    m2: {}     m3: {}  m4: {} '.format(m0,m1,m2,m3,m4))
+    # # print('e0: {}   e1: {}    e2: {}     e3: {}  e4: {} '.format(e0,e1,e2,e3,e4))
+    # print('c1: {}   c2: {}    c3: {}     c4: {}'.format(c1,c2,c3,c4))
+    # print('c[{}]={}     m[{}]={}\n'. format(k, c[k], k, m[k]))
     plt.pause(t)
     k += 1
     mainGUI.after(1000, startGraphs)
@@ -473,7 +461,7 @@ Button(mainGUI, text='Terminar', command=mainGUI.destroy).grid(row=23, column=4)
 plt.ion()
 plt.show()
 fig, axs = plt.subplots(2, sharex=True)
-axs[0].set_title('Salida c(k) y Referencia r(k)')
+axs[0].set_title('Referencia r(k) y Salida c(k)')
 axs[0].set_ylabel('Amplitud')
 axs[1].set_title('Manipulación m(k), Perturbación Entrada y Perturbación Salida')
 axs[1].set_xlabel('Tiempo')
