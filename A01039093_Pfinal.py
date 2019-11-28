@@ -1,7 +1,6 @@
 from tkinter import *
 import matplotlib.pyplot as plt
-import numpy as np
-from sympy import symbols, Eq, solve
+from numpy import *
 
 ###########################################################
 # Vania Alejandra Elizondo Martínez
@@ -31,15 +30,21 @@ def startGraphs():
     global mainGUI
     global fig, axs
     global m, c, k, PE, PS
+    global eMk, eRk, eT
     global eA1, eA2, eA3, eA4
     global eB0, eB1, eB2, eB3, eB4, eD
-    global eKc, eTau, eTheta, eT
-    global eRk, eKp, eTauI, eTauD
+    global eKc, eTau, eTheta
+    global eKp, eTauI, eTauD
     global eAlpha1, eAlpha2, eAlpha3, eAlpha4
     global eBeta0, eBeta1, eBeta2, eBeta3, eBeta4
     global modoOperacion, ordenPlanta, controlador
 
 # Actualizar entradas dependiendo de orden de planta, modo de operacion y controlador
+    try:
+        t = float(eT.get())
+    except:
+        t = 0
+
     if (ordenPlanta.get() == 'cero'):
         try: 
             a1 = float(eA1.get())
@@ -91,25 +96,20 @@ def startGraphs():
         except:
             tau = 0
         try:
-            theta = float(eTheta.get())
+            thetaP = float(eTheta.get())
         except:
-            theta = 0
+            thetaP = 0
         try:
-            t = float(eT.get())
-        except:
-            t = 0
-        tP, N = symbols('tP N')
-        eqN = Eq(tP/t)
-        eqTP = Eq(theta + N*t)
-        sol = solve((eqN, eqTP), (N, tP))
-        d = sol[N]
-        thetaP = sol[tP]
+            d = int(floor(thetaP/t))
+        except ZeroDivisionError:
+            d = 0
+        theta = thetaP - d * t
         try:
             mt = 1 - (theta/t)
         except ZeroDivisionError:
             mt = 1
         try:
-            a1 = np.exp(-(t/tau))
+            a1 = exp(-(t/tau))
         except ZeroDivisionError:
             a1 = 1
         a2 = 0
@@ -117,7 +117,7 @@ def startGraphs():
         a4 = 0
         b0 = 0
         try:
-            b1 = kc * (1 - np.exp(-(mt*t/tau)))
+            b1 = kc * (1 - exp(-(mt*t/tau)))
         except ZeroDivisionError:
             b1 = 0
         try:
@@ -128,7 +128,7 @@ def startGraphs():
             exp2 = (t/tau)
         except ZeroDivisionError:
             exp2 = 0
-        b2 = kc * (np.exp(-exp1) - np.exp(-exp2))
+        b2 = kc * (exp(-exp1) - exp(-exp2))
         b3 = 0
         b4 = 0
 
@@ -145,10 +145,6 @@ def startGraphs():
             tauD = float(eTauD.get())
         except:
             tauD = 0
-        try:
-            t = float(eT.get())
-        except:
-            t = 0
         alpha1 = 1
         alpha2 = 0
         alpha3 = 0
@@ -205,6 +201,11 @@ def startGraphs():
             beta4 = 0
 
     if (modoOperacion.get() == 'manual'):
+        try:
+            mk = float(eMk.get())
+        except:
+            mk = 0
+        m.append(mk)
         if ((k-1) < 0):
             c1 = 0
             rk = 0
@@ -223,7 +224,7 @@ def startGraphs():
             c4 = 0
         else:
             c4 = c[k-4]
-        if ((k-d) <= 0):
+        if ((k-d) < 0):
             m0 = 0
         else:
             m0 = m[k-d]
@@ -243,11 +244,6 @@ def startGraphs():
             m4 = 0
         else:
             m4 = m[k-4-d]
-        e0 = 0
-        e1 = 0
-        e2 = 0
-        e3 = 0
-        e4 = 0
     elif (modoOperacion.get() == 'auto'):
         try:
             rk = float(eRk.get())
@@ -256,54 +252,67 @@ def startGraphs():
         if ((k-1) < 0):
             c1 = 0
             e0 = 0
-            m1 = 0
         else:
             c1 = c[k-1]
             e0 = rk - c[k-1]
-            m1 = m[k-1]
         if ((k-2) < 0):
             c2 = 0
             e1 = 0
-            m2 = 0
         else:
             c2 = c[k-2]
             e1 = rk - c[k-2]
-            m2 = m[k-2]
         if ((k-3) < 0):
             c3 = 0
             e2 = 0
-            m3 = 0
         else:
             c3 = c[k-3]
             e2 = rk - c[k-3]
-            m3 = m[k-3]
         if ((k-4) < 0):
             c4 = 0
             e3 = 0
-            m4 = 0
         else:
             c4 = c[k-4]
             e3 = rk - c[k-4]
-            m4 = m[k-4]
         if ((k-5) < 0):
             e4 = 0
         else:
             e4 = rk - c[k-5]
         m0 = 0
+        if ((k-1-d) < 0):
+            m1 = 0
+        else:
+            m1 = m[k-1-d]
+        if ((k-2-d) < 0):
+            m2 = 0
+        else:
+            m2 = m[k-2-d]
+        if ((k-3-d) < 0):
+            m3 = 0
+        else:
+            m3 = m[k-3-d]
+        if ((k-4-d) < 0):
+            m4 = 0
+        else:
+            m4 = m[k-4-d]
+        m.append(alpha1*m1 + alpha2*m2 + alpha3*m3 + alpha4*m4 + beta0*e0 + beta1*e1 + beta2*e2 + beta3*e3 + beta4*e4)
     
 # Graficar
-    m.append(alpha1*m1 + alpha2*m2 + alpha3*m3 + alpha4*m4 + beta0*e0 + beta1*e1 + beta2*e2 + beta3*e3 + beta4*e4)
     c.append(PE + a1*c1 + a2*c2 + a3*c3 + a4*c4 + b0*m0 + b1*m1 + b2*m2 + b3*m3 + b4*m4 + PS)
     axs[0].plot(k, rk, 'bs', k, c[k], 'm.')
     axs[0].legend(['rk', 'c[k]'], loc='upper right')
     axs[1].plot(k, m[k], 'gs', k, PE, 'rd', k, PS, 'c.')
     axs[1].legend(['m[k]', 'Pert. Entrada', 'Pert. Salida'], loc='upper right')
-    print('a1: {} a2: {} a3: {} a4: {} '.format(a1,a2,a3,a4))
-    print('b0: {} b1: {} b2: {} b3: {} b4: {} '.format(b0,b1,b2,b3,b4))
-    print('c1: {} c2: {} c3: {} c4: {} '.format(c1,c2,c3,c4))
-    print('m0: {} m1: {} m2: {} m3: {} m4: {} '.format(m0,m1,m2,m3,m4))
-    print('d: {} PE: {} PS: {}'.format(d,PE,PS))
-    print('c[{}]={}, m[{}]={}\n'. format(k, c[k], k, m[k]))
+    print('ordenPlanta: {}     controlador: {}     modoOperacion: {}'.format(ordenPlanta.get(),controlador.get(),modoOperacion.get()))
+    print('a1: {}   a2: {}    a3: {}     a4: {} '.format(a1,a2,a3,a4))
+    print('b0: {}   b1: {}    b2: {}     b3: {}     b4: {}   d: {}'.format(b0,b1,b2,b3,b4,d))
+    print('alpha1: {}   alpha2: {}    alpha3: {}     alpha4: {} '.format(alpha1,alpha2,alpha3,alpha4))
+    print('beta0: {}    beta1: {}     beta2: {}    beta3: {}   beta4: {}'.format(beta0,beta1,beta2,beta3,beta4))
+    # print('t: {}    mk: {}      rk: {}'.format(t,mk,rk))
+    print('PE: {}   PS: {}'.format(PE,PS))
+    print('m0: {}   m1: {}    m2: {}     m3: {}  m4: {} '.format(m0,m1,m2,m3,m4))
+    # print('e0: {}   e1: {}    e2: {}     e3: {}  e4: {} '.format(e0,e1,e2,e3,e4))
+    print('c1: {}   c2: {}    c3: {}     c4: {}'.format(c1,c2,c3,c4))
+    print('c[{}]={}     m[{}]={}\n'. format(k, c[k], k, m[k]))
     plt.pause(t)
     k += 1
     mainGUI.after(1000, startGraphs)
@@ -344,49 +353,55 @@ rbPID = Radiobutton(mainGUI, text='PID', indicatoron=False, selectcolor='yellow'
 rbEcGral = Radiobutton(mainGUI, text='Ec. General', indicatoron=False, selectcolor='yellow', variable=controlador, value='ecgral')
 rbMan.grid(row=1, column=3)
 rbAuto.grid(row=1, column=4)
-rbCero.grid(row=3, column=1)
-rbPrimero.grid(row=3, column=3)
-rbPID.grid(row=3, column=5)
-rbEcGral.grid(row=3, column=7)
+rbCero.grid(row=5, column=1)
+rbPrimero.grid(row=5, column=3)
+rbPID.grid(row=5, column=5)
+rbEcGral.grid(row=5, column=7)
 
 # Labels
 Label(mainGUI, text='').grid(row=0) 
 Label(mainGUI, text='').grid(row=2) 
 Label(mainGUI, text='').grid(row=4) 
-Label(mainGUI, text='a1', anchor=W, justify=RIGHT).grid(row=5, column=0) 
-Label(mainGUI, text='a2', anchor=W, justify=RIGHT).grid(row=6, column=0) 
-Label(mainGUI, text='a3', anchor=W, justify=RIGHT).grid(row=7, column=0) 
-Label(mainGUI, text='a4', anchor=W, justify=RIGHT).grid(row=8, column=0) 
-Label(mainGUI, text='b0', anchor=W, justify=RIGHT).grid(row=10, column=0) 
-Label(mainGUI, text='b1', anchor=W, justify=RIGHT).grid(row=11, column=0) 
-Label(mainGUI, text='b2', anchor=W, justify=RIGHT).grid(row=12, column=0) 
-Label(mainGUI, text='b3', anchor=W, justify=RIGHT).grid(row=13, column=0) 
-Label(mainGUI, text='b4', anchor=W, justify=RIGHT).grid(row=14, column=0) 
-Label(mainGUI, text='d', anchor=W, justify=RIGHT).grid(row=16, column=0) 
-Label(mainGUI, text='K', anchor=W, justify=RIGHT).grid(row=5, column=2)
-Label(mainGUI, text='Tau', anchor=W, justify=RIGHT).grid(row=6, column=2)
-Label(mainGUI, text='Theta', anchor=W, justify=RIGHT).grid(row=7, column=2)
-Label(mainGUI, text='T', anchor=W, justify=RIGHT).grid(row=9, column=3)
-Label(mainGUI, text='Rk', anchor=W, justify=RIGHT).grid(row=11, column=3) 
-Label(mainGUI, text='Kp', anchor=W, justify=RIGHT).grid(row=5, column=4)
-Label(mainGUI, text='TauI', anchor=W, justify=RIGHT).grid(row=6, column=4)
-Label(mainGUI, text='TauD', anchor=W, justify=RIGHT).grid(row=7, column=4)
-Label(mainGUI, text='alpha1', anchor=W, justify=RIGHT).grid(row=5, column=6) 
-Label(mainGUI, text='alpha2', anchor=W, justify=RIGHT).grid(row=6, column=6) 
-Label(mainGUI, text='alpha3', anchor=W, justify=RIGHT).grid(row=7, column=6) 
-Label(mainGUI, text='alpha4', anchor=W, justify=RIGHT).grid(row=8, column=6) 
-Label(mainGUI, text='beta0', anchor=W, justify=RIGHT).grid(row=10, column=6) 
-Label(mainGUI, text='beta1', anchor=W, justify=RIGHT).grid(row=11, column=6) 
-Label(mainGUI, text='beta2', anchor=W, justify=RIGHT).grid(row=12, column=6) 
-Label(mainGUI, text='beta3', anchor=W, justify=RIGHT).grid(row=13, column=6) 
-Label(mainGUI, text='beta4', anchor=W, justify=RIGHT).grid(row=14, column=6) 
-Label(mainGUI, text='Pert. Entrada', anchor=W, justify=RIGHT).grid(row=18, column=2) 
-Label(mainGUI, text='Pert. Salida', anchor=W, justify=RIGHT).grid(row=18, column=4) 
+Label(mainGUI, text='').grid(row=6) 
+Label(mainGUI, text='mk', anchor=W, justify=RIGHT).grid(row=3, column=2) 
+Label(mainGUI, text='Rk', anchor=W, justify=RIGHT).grid(row=3, column=4) 
+Label(mainGUI, text='a1', anchor=W, justify=RIGHT).grid(row=7, column=0) 
+Label(mainGUI, text='a2', anchor=W, justify=RIGHT).grid(row=8, column=0) 
+Label(mainGUI, text='a3', anchor=W, justify=RIGHT).grid(row=9, column=0) 
+Label(mainGUI, text='a4', anchor=W, justify=RIGHT).grid(row=10, column=0) 
+Label(mainGUI, text='b0', anchor=W, justify=RIGHT).grid(row=12, column=0) 
+Label(mainGUI, text='b1', anchor=W, justify=RIGHT).grid(row=13, column=0) 
+Label(mainGUI, text='b2', anchor=W, justify=RIGHT).grid(row=14, column=0) 
+Label(mainGUI, text='b3', anchor=W, justify=RIGHT).grid(row=15, column=0) 
+Label(mainGUI, text='b4', anchor=W, justify=RIGHT).grid(row=16, column=0) 
+Label(mainGUI, text='d', anchor=W, justify=RIGHT).grid(row=18, column=0) 
+Label(mainGUI, text='K', anchor=W, justify=RIGHT).grid(row=7, column=2)
+Label(mainGUI, text='Tau', anchor=W, justify=RIGHT).grid(row=8, column=2)
+Label(mainGUI, text='Theta', anchor=W, justify=RIGHT).grid(row=9, column=2)
+Label(mainGUI, text='T', anchor=W, justify=RIGHT).grid(row=11, column=3)
+Label(mainGUI, text='Kp', anchor=W, justify=RIGHT).grid(row=7, column=4)
+Label(mainGUI, text='TauI', anchor=W, justify=RIGHT).grid(row=8, column=4)
+Label(mainGUI, text='TauD', anchor=W, justify=RIGHT).grid(row=9, column=4)
+Label(mainGUI, text='alpha1', anchor=W, justify=RIGHT).grid(row=7, column=6) 
+Label(mainGUI, text='alpha2', anchor=W, justify=RIGHT).grid(row=8, column=6) 
+Label(mainGUI, text='alpha3', anchor=W, justify=RIGHT).grid(row=9, column=6) 
+Label(mainGUI, text='alpha4', anchor=W, justify=RIGHT).grid(row=10, column=6) 
+Label(mainGUI, text='beta0', anchor=W, justify=RIGHT).grid(row=12, column=6) 
+Label(mainGUI, text='beta1', anchor=W, justify=RIGHT).grid(row=13, column=6) 
+Label(mainGUI, text='beta2', anchor=W, justify=RIGHT).grid(row=14, column=6) 
+Label(mainGUI, text='beta3', anchor=W, justify=RIGHT).grid(row=15, column=6) 
+Label(mainGUI, text='beta4', anchor=W, justify=RIGHT).grid(row=16, column=6) 
+Label(mainGUI, text='Pert. Entrada', anchor=W, justify=RIGHT).grid(row=20, column=2) 
+Label(mainGUI, text='Pert. Salida', anchor=W, justify=RIGHT).grid(row=20, column=4) 
 Label(mainGUI, text='').grid(row=17) 
+Label(mainGUI, text='').grid(row=19) 
 Label(mainGUI, text='').grid(row=20) 
 Label(mainGUI, text='').grid(row=22) 
+Label(mainGUI, text='').grid(row=24) 
 
 # Entradas de texto
+eMk = Entry(mainGUI, width=7)
+eRk = Entry(mainGUI, width=7)
 eA1 = Entry(mainGUI, width=7) 
 eA2 = Entry(mainGUI, width=7) 
 eA3 = Entry(mainGUI, width=7) 
@@ -401,7 +416,6 @@ eKc = Entry(mainGUI, width=7)
 eTau = Entry(mainGUI, width=7)
 eTheta = Entry(mainGUI, width=7)
 eT = Entry(mainGUI, width=7)
-eRk = Entry(mainGUI, width=7)
 eKp = Entry(mainGUI, width=7)
 eTauI = Entry(mainGUI, width=7)
 eTauD = Entry(mainGUI, width=7)
@@ -418,41 +432,42 @@ ePE = Entry(mainGUI, width=7)
 ePS = Entry(mainGUI, width=7) 
 
 # Configuracion entradas de texto
-eA1.grid(row=5, column=1) 
-eA2.grid(row=6, column=1)
-eA3.grid(row=7, column=1)
-eA4.grid(row=8, column=1)
-eB0.grid(row=10, column=1) 
-eB1.grid(row=11, column=1) 
-eB2.grid(row=12, column=1)
-eB3.grid(row=13, column=1)
-eB4.grid(row=14, column=1)
-eD.grid(row=16, column=1)
-eKc.grid(row=5, column=3)
-eTau.grid(row=6, column=3)
-eTheta.grid(row=7, column=3)
-eT.grid(row=9, column=4)
-eRk.grid(row=11, column=4)
-eKp.grid(row=5, column=5)
-eTauI.grid(row=6, column=5)
-eTauD.grid(row=7, column=5)
-eAlpha1.grid(row=5, column=7) 
-eAlpha2.grid(row=6, column=7)
-eAlpha3.grid(row=7, column=7)
-eAlpha4.grid(row=8, column=7)
-eBeta0.grid(row=10, column=7) 
-eBeta1.grid(row=11, column=7) 
-eBeta2.grid(row=12, column=7)
-eBeta3.grid(row=13, column=7)
-eBeta4.grid(row=14, column=7)
-ePE.grid(row=18, column=3)
-ePS.grid(row=18, column=5)
+eMk.grid(row=3, column=3)
+eRk.grid(row=3, column=5)
+eA1.grid(row=7, column=1) 
+eA2.grid(row=8, column=1)
+eA3.grid(row=9, column=1)
+eA4.grid(row=10, column=1)
+eB0.grid(row=12, column=1) 
+eB1.grid(row=13, column=1) 
+eB2.grid(row=14, column=1)
+eB3.grid(row=15, column=1)
+eB4.grid(row=16, column=1)
+eD.grid(row=18, column=1)
+eKc.grid(row=7, column=3)
+eTau.grid(row=8, column=3)
+eTheta.grid(row=9, column=3)
+eT.grid(row=11, column=4)
+eKp.grid(row=7, column=5)
+eTauI.grid(row=8, column=5)
+eTauD.grid(row=9, column=5)
+eAlpha1.grid(row=7, column=7) 
+eAlpha2.grid(row=8, column=7)
+eAlpha3.grid(row=9, column=7)
+eAlpha4.grid(row=10, column=7)
+eBeta0.grid(row=12, column=7) 
+eBeta1.grid(row=13, column=7) 
+eBeta2.grid(row=14, column=7)
+eBeta3.grid(row=15, column=7)
+eBeta4.grid(row=16, column=7)
+ePE.grid(row=20, column=3)
+ePS.grid(row=20, column=5)
 
 # Botones
-Button(mainGUI, text='Aplicar', command=pertEntrada).grid(row=19, column=3)
-Button(mainGUI, text='Aplicar', command=pertSalida).grid(row=19, column=5)
-Button(mainGUI, text='Comenzar', command=startGraphs).grid(row=21, column=3)
-Button(mainGUI, text='Terminar', command=mainGUI.destroy).grid(row=21, column=4)
+Button(mainGUI, text='Aplicar', command=pertEntrada).grid(row=21, column=3)
+Button(mainGUI, text='Aplicar', command=pertSalida).grid(row=21, column=5)
+Button(mainGUI, text='Comenzar', command=startGraphs).grid(row=23, column=3)
+Button(mainGUI, text='Terminar', command=mainGUI.destroy).grid(row=23, column=4)
 
 # Creacion de graficas interactivas
 plt.ion()
