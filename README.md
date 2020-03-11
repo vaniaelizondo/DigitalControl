@@ -19,7 +19,7 @@ In order for the project to work, the following should be considered:
 * Select either the "PID" or "General Eq." button to choose the type of controller that will be applied to the system if the automatic mode is selected. 
 * Give the values of Kp, TauI y TauD si se selecciona "PID". 
 * Give the values of the coefficients alpha1, alpha2, alpha3, alpha4, beta0, beta1, beta2, beta3, beta4 if "General Eq." is selected. The following image shows the equation used to compute the result.
-[General Equation](/images/GeneralEquation.png)
+![General Equation](/images/GeneralEquation.png)
 * Give the value of T (sampling time). **Do not leave this field empty**.
 * Write the disturbances magnitudes if wanted.
 * Click on "Start" to start the simulation.
